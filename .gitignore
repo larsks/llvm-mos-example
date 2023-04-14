@@ -1,0 +1,4 @@
+*.elf
+*.o
+hello-printf
+hello-strout

@@ -1,0 +1,83 @@
+
+hello-strout.elf:	file format elf32-mos
+
+Disassembly of section .text:
+
+0000080d <_start>:
+     80d: a2 2f        	ldx	#$2f	; configure processor port ddr
+     80f: 86 00        	stx	$0
+     811: a2 3e        	ldx	#$3e	; configure process port
+     813: 86 01        	stx	$1
+
+00000815 <__do_init_stack>:
+     815: a9 ff        	lda	#$ff
+     817: 85 02        	sta	$2
+     819: a9 cf        	lda	#$cf
+     81b: 85 03        	sta	$3
+     81d: 20 3f 08     	jsr	$83f	; call main()
+
+00000820 <__after_main>:
+     820: 4c 35 08     	jmp	$835
+
+00000823 <_fini>:
+     823: a2 3f        	ldx	#$3f
+     825: 86 01        	stx	$1
+     827: 60           	rts
+
+00000828 <strout>:
+     828: a0 00        	ldy	#$0
+     82a: b1 04        	lda	($4),y	; load character from string
+     82c: f0 06        	beq	$834	; return on NUL
+     82e: 20 d2 ff     	jsr	$ffd2	; call CHROUT
+     831: c8           	iny		; increment index
+     832: d0 f6        	bne	$82a	; repeat
+     834: 60           	rts
+
+00000835 <__exit_return>:
+     835: 8d a2 08     	sta	$8a2
+     838: 20 23 08     	jsr	$823
+     83b: ad a2 08     	lda	$8a2
+     83e: 60           	rts
+
+0000083f <main>:
+     83f: 18           	clc
+     840: a5 02        	lda	$2
+     842: 69 fe        	adc	#$fe
+     844: 85 02        	sta	$2
+     846: a5 03        	lda	$3
+     848: 69 ff        	adc	#$ff
+     84a: 85 03        	sta	$3
+     84c: 18           	clc
+     84d: a6 02        	ldx	$2
+     84f: 86 04        	stx	$4
+     851: 85 05        	sta	$5
+     853: a9 00        	lda	#$0
+     855: a8           	tay
+     856: 91 04        	sta	($4),y
+     858: a0 01        	ldy	#$1
+     85a: 91 04        	sta	($4),y
+
+     85c: a2 85        	ldx	#$85	; store address of first string
+     85e: 86 04        	stx	$4	; in imaginary register RS1
+     860: a2 08        	ldx	#$8
+     862: 86 05        	stx	$5
+     864: 20 28 08     	jsr	$828	; call strout()
+
+     867: a2 92        	ldx	#$92	; store address of second string
+     869: 86 04        	stx	$4	; in imaginary register RS1
+     86b: a2 08        	ldx	#$8
+     86d: 86 05        	stx	$5
+     86f: 20 28 08     	jsr	$828	; call strout()
+
+     872: a2 00        	ldx	#$0	; function return value is returned
+     874: 8a           	txa		; in ((X<<8)|A).
+     875: 48           	pha
+     876: 18           	clc
+     877: a5 02        	lda	$2
+     879: 69 02        	adc	#$2
+     87b: 85 02        	sta	$2
+     87d: a5 03        	lda	$3
+     87f: 69 00        	adc	#$0
+     881: 85 03        	sta	$3
+     883: 68           	pla
+     884: 60           	rts		; return
